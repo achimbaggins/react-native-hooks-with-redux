@@ -11,9 +11,9 @@ const add_item = (state,payload) => {
     return newState
 }
 
-const remove_item = (state,payload) => {
+const remove_item = (state,id) => {
     let newState = {...state}
-    newState.offlineData.filter(item => item.id !== payload.id)
+    newState.offlineData.filter(item => item.id !== id)
     return newState
 }
 
