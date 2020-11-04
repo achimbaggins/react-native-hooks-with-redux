@@ -26,7 +26,6 @@ const update_item = (state,payload) => {
       }
       return item
     })
-    console.log('===========', JSON.stringify(modified))
     return {...newState, offlineData: modified}
 }
 
