@@ -8,6 +8,7 @@ Icon.loadFont()
 import DropDownPicker  from 'react-native-dropdown-picker'
 import uuid from 'react-native-uuid'
 import {useDispatch,useSelector} from 'react-redux'
+import Snackbar from 'react-native-snackbar';
 
 import {add_data, remove_data, update_data} from '../_redux/actions/utility'
 
@@ -35,17 +36,35 @@ export default function Main(props) {
         setModalEdit(true)
     }
 
-    const addItem = () => {
-        let data = {
-            id : uuid.v1(),
-            allowNone: allow,
-            shuffle,
-            respondentOptions: state,
-            question,
-            answerOption
+    const formValidator = () => {
+        if(question === ''){ 
+            Snackbar.show({
+                text: 'Question cannot be empty',
+                duration: Snackbar.LENGTH_SHORT,
+            })
+        } else {
+            if(answerOption === ''){
+                Snackbar.show({
+                    text: 'Answer cannot be empty',
+                    duration: Snackbar.LENGTH_SHORT,
+                })
+            } else return true
         }
-        dispatch(add_data(data))
-        setModalAdd(false)
+    }
+
+    const addItem = () => {
+        if(formValidator()){
+            let data = {
+                id : uuid.v1(),
+                allowNone: allow,
+                shuffle,
+                respondentOptions: state,
+                question,
+                answerOption
+            }
+            dispatch(add_data(data))
+            setModalAdd(false)
+        }
     }
 
     const removeItem = (id) => {
@@ -53,21 +72,23 @@ export default function Main(props) {
     }
 
     const updateItem = (id) => {
-        let data = {
-            id,
-            allowNone: allow,
-            shuffle,
-            respondentOptions: state,
-            question,
-            answerOption
+        if(formValidator()){
+            let data = {
+                id,
+                allowNone: allow,
+                shuffle,
+                respondentOptions: state,
+                question,
+                answerOption
+            }
+            dispatch(update_data(data))
+            setModalEdit(false)
+            setAnswerOption('')
+            setAllow(false)
+            setShuffle(false)
+            setQuestion('')
+            setState({value: ''})
         }
-        dispatch(update_data(data))
-        setModalEdit(false)
-        setAnswerOption('')
-        setAllow(false)
-        setShuffle(false)
-        setQuestion('')
-        setState({value: ''})
     }
 
     useEffect(()=>{
@@ -95,7 +116,7 @@ export default function Main(props) {
                                             <View style={{height: 5, width: 10,}}/>
                                             <TouchableOpacity onPress={()=>{
                                                 Alert.alert(
-                                                    'Please Confirm',
+                                                    'Wait',
                                                     'Are you sure to delete this item?',
                                                     [
                                                         {text: 'Cancel', onPress: () => null},
